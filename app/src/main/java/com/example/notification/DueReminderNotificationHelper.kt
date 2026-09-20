@@ -131,8 +131,6 @@ object DueReminderNotificationHelper {
             else -> "akan jatuh tempo pada ${invoice.formattedDueDate}"
         }
 
-        val quotaStr = if (invoice.quotaLimitGb > 0) "${invoice.quotaLimitGb} GB" else "Unlimited"
-
         val message = """
             *Pemberitahuan Tagihan Internet*
             _${settings.providerName}_
@@ -146,7 +144,6 @@ object DueReminderNotificationHelper {
             • ID Pelanggan: ${invoice.customerCode}
             • Paket: ${invoice.planName}
             • Periode: ${invoice.periodMonthYear}
-            • Pemakaian Data: ${invoice.dataUsedGb} GB / $quotaStr
             • Biaya Paket: ${invoice.formattedAmount}
             • Biaya Admin: ${invoice.formattedAdminFee}
             • *TOTAL TAGIHAN: ${invoice.formattedTotal}*

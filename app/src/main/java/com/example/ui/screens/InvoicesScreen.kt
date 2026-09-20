@@ -279,12 +279,6 @@ fun InvoiceItemCard(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    val quotaText = if (invoice.quotaLimitGb > 0) "${invoice.quotaLimitGb} GB" else "Unlimited"
-                    Text(
-                        text = "Pemakaian Data: ${invoice.dataUsedGb} GB / $quotaText",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
                     if (invoice.isPaid && invoice.formattedPaidDate != null) {
                         Text(
                             text = "Dibayar: ${invoice.formattedPaidDate} (${invoice.paymentMethod ?: "Tunai"})",

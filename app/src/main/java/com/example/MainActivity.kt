@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.DataUsage
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Print
@@ -61,10 +60,8 @@ import com.example.ui.components.AddCustomerDialog
 import com.example.ui.components.CreateInvoiceDialog
 import com.example.ui.components.PayInvoiceDialog
 import com.example.ui.components.ThermalPrintReceiptDialog
-import com.example.ui.components.UpdateUsageDialog
 import com.example.ui.screens.CustomersScreen
 import com.example.ui.screens.DashboardScreen
-import com.example.ui.screens.DataUsageScreen
 import com.example.ui.screens.InvoicesScreen
 import com.example.ui.screens.PrinterSettingsScreen
 import com.example.ui.theme.MyApplicationTheme
@@ -126,7 +123,6 @@ fun MainAppScreen(viewModel: BillingViewModel) {
     var invoiceToPay by remember { mutableStateOf<BillInvoice?>(null) }
     var customerToAddOrEdit by remember { mutableStateOf<Customer?>(null) }
     var isAddCustomerDialogOpen by remember { mutableStateOf(false) }
-    var customerToUpdateUsage by remember { mutableStateOf<Customer?>(null) }
     var isCreateInvoiceDialogOpen by remember { mutableStateOf(false) }
 
     // State Flows
@@ -141,7 +137,6 @@ fun MainAppScreen(viewModel: BillingViewModel) {
     val totalPending by viewModel.totalPendingAmount.collectAsStateWithLifecycle()
     val unpaidCount by viewModel.unpaidCount.collectAsStateWithLifecycle()
     val overdueCount by viewModel.overdueCount.collectAsStateWithLifecycle()
-    val totalBandwidthGb by viewModel.totalBandwidthUsedGb.collectAsStateWithLifecycle()
 
     val now = System.currentTimeMillis()
     val urgentInvoices = invoices.filter { !it.isPaid && (it.isOverdue(now) || it.daysUntilDue(now) <= 3) }
@@ -149,7 +144,6 @@ fun MainAppScreen(viewModel: BillingViewModel) {
     val navTitles = listOf(
         "Beranda & Ringkasan",
         "Tagihan & Kuitansi",
-        "Monitoring Kuota Data",
         "Data Pelanggan",
         "Printer & Pengaturan"
     )
@@ -236,20 +230,13 @@ fun MainAppScreen(viewModel: BillingViewModel) {
                 NavigationBarItem(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    icon = { Icon(Icons.Default.DataUsage, contentDescription = "Kuota") },
-                    label = { Text("Kuota Data") },
-                    modifier = Modifier.testTag("nav_tab_data_usage")
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 3,
-                    onClick = { selectedTab = 3 },
                     icon = { Icon(Icons.Default.People, contentDescription = "Pelanggan") },
                     label = { Text("Pelanggan") },
                     modifier = Modifier.testTag("nav_tab_customers")
                 )
                 NavigationBarItem(
-                    selected = selectedTab == 4,
-                    onClick = { selectedTab = 4 },
+                    selected = selectedTab == 3,
+                    onClick = { selectedTab = 3 },
                     icon = { Icon(Icons.Default.Print, contentDescription = "Printer") },
                     label = { Text("Printer") },
                     modifier = Modifier.testTag("nav_tab_printer")
@@ -268,7 +255,6 @@ fun MainAppScreen(viewModel: BillingViewModel) {
                     unpaidCount = unpaidCount,
                     overdueCount = overdueCount,
                     totalPendingAmount = totalPending,
-                    totalBandwidthGb = totalBandwidthGb,
                     urgentInvoices = urgentInvoices,
                     onTriggerNotifications = {
                         viewModel.checkAndSendAutomatedDueNotifications(context)
@@ -299,13 +285,7 @@ fun MainAppScreen(viewModel: BillingViewModel) {
                     onCreateInvoiceClick = { isCreateInvoiceDialogOpen = true }
                 )
 
-                2 -> DataUsageScreen(
-                    customers = customers,
-                    settings = settings,
-                    onUpdateCustomerUsage = { customer -> customerToUpdateUsage = customer }
-                )
-
-                3 -> CustomersScreen(
+                2 -> CustomersScreen(
                     customers = customers,
                     onAddCustomer = {
                         customerToAddOrEdit = null
@@ -318,7 +298,7 @@ fun MainAppScreen(viewModel: BillingViewModel) {
                     onDeleteCustomer = { customer -> viewModel.deleteCustomer(customer) }
                 )
 
-                4 -> PrinterSettingsScreen(
+                3 -> PrinterSettingsScreen(
                     settings = settings,
                     thermalPrinterManager = viewModel.thermalPrinterManager,
                     pairedDevices = printState.pairedDevices,
@@ -379,19 +359,6 @@ fun MainAppScreen(viewModel: BillingViewModel) {
                 viewModel.addOrUpdateCustomer(customer, isNew)
                 isAddCustomerDialogOpen = false
                 customerToAddOrEdit = null
-            }
-        )
-    }
-
-    // --- Update Customer Data Usage Dialog ---
-    if (customerToUpdateUsage != null) {
-        UpdateUsageDialog(
-            customer = customerToUpdateUsage!!,
-            onDismiss = { customerToUpdateUsage = null },
-            onConfirmUpdate = { newUsageGb ->
-                val customer = customerToUpdateUsage!!
-                viewModel.updateCustomerDataUsage(customer.id, newUsageGb)
-                customerToUpdateUsage = null
             }
         )
     }

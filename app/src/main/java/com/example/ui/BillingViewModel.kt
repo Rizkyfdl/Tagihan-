@@ -68,7 +68,6 @@ class BillingViewModel(application: Application) : AndroidViewModel(application)
     val totalPendingAmount: StateFlow<Double>
     val unpaidCount: StateFlow<Int>
     val overdueCount: StateFlow<Int>
-    val totalBandwidthUsedGb: StateFlow<Double>
 
     init {
         val db = AppDatabase.getDatabase(application, viewModelScope)
@@ -119,10 +118,6 @@ class BillingViewModel(application: Application) : AndroidViewModel(application)
             invoices.count { !it.isPaid && (it.isOverdue(now) || it.daysUntilDue(now) <= 1) }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
-        totalBandwidthUsedGb = allCustomers.combine(_settings) { customers, _ ->
-            customers.sumOf { it.currentUsageGb }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
-
         refreshPairedDevices()
     }
 
@@ -145,13 +140,6 @@ class BillingViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             repository.markInvoiceAsPaid(invoiceId, paymentMethod)
             _snackBarMessage.emit("Tagihan berhasil ditandai LUNAS.")
-        }
-    }
-
-    fun updateCustomerDataUsage(customerId: Long, newUsageGb: Double) {
-        viewModelScope.launch {
-            repository.updateCustomerDataUsage(customerId, newUsageGb)
-            _snackBarMessage.emit("Penggunaan data berhasil diperbarui: $newUsageGb GB")
         }
     }
 

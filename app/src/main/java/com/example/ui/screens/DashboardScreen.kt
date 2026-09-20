@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Bolt
-import androidx.compose.material.icons.filled.DataUsage
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Print
@@ -64,7 +63,6 @@ fun DashboardScreen(
     unpaidCount: Int,
     overdueCount: Int,
     totalPendingAmount: Double,
-    totalBandwidthGb: Double,
     urgentInvoices: List<BillInvoice>,
     onTriggerNotifications: () -> Unit,
     onPayInvoice: (BillInvoice) -> Unit,
@@ -202,7 +200,7 @@ fun DashboardScreen(
             }
         }
 
-        // Secondary Metric: Monthly Data Usage Overview
+        // Quick Action: Kelola Tagihan
         item {
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
@@ -215,32 +213,34 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Surface(
                             shape = CircleShape,
-                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            color = MaterialTheme.colorScheme.primaryContainer,
                             modifier = Modifier.size(44.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
-                                    imageVector = Icons.Default.DataUsage,
+                                    imageVector = Icons.Default.ReceiptLong,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Total Pemakaian Data Jaringan",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                text = "Kelola Tagihan",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = String.format("%.1f GB", totalBandwidthGb),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
+                                text = "Buat tagihan baru & cetak bukti struk",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -251,7 +251,7 @@ fun DashboardScreen(
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Tagihan")
+                        Text("Tagihan Baru")
                     }
                 }
             }
@@ -443,11 +443,6 @@ fun UrgentInvoiceCard(
                 Column {
                     Text(
                         text = "Jatuh Tempo: ${invoice.formattedDueDate}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "Pemakaian Data: ${invoice.dataUsedGb} GB",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

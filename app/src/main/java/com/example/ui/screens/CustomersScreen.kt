@@ -236,10 +236,10 @@ fun CustomerItemCard(
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold
                     )
-                    val quotaText = if (customer.quotaLimitGb > 0) "${customer.quotaLimitGb} GB" else "Unlimited"
                     Text(
-                        text = "Tarif: ${BillInvoice.formatRupiah(customer.monthlyFee)} / bln • $quotaText",
+                        text = "Tarif: ${BillInvoice.formatRupiah(customer.monthlyFee)} / bln",
                         style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }

@@ -1,6 +1,6 @@
 {
   "name": "Tagihan Internet",
-  "description": "Aplikasi tagihan internet untuk memantau pemakaian data bulanan, notifikasi otomatis jatuh tempo, dan cetak kuitansi via printer thermal bluetooth.",
+  "description": "Aplikasi tagihan internet dengan notifikasi otomatis jatuh tempo pembayaran dan cetak kuitansi struk via printer thermal Bluetooth.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

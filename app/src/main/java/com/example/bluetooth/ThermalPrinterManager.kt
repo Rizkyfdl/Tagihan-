@@ -167,10 +167,6 @@ class ThermalPrinterManager(private val context: Context) {
         }
         writeRow("Paket", invoice.planName)
 
-        // Data usage info
-        val quotaStr = if (invoice.quotaLimitGb > 0) "${invoice.quotaLimitGb} GB" else "Unlimited"
-        writeRow("Pemakaian Data", "${invoice.dataUsedGb} GB / $quotaStr")
-
         divider('-')
 
         // 4. Financial Breakdown
@@ -249,8 +245,6 @@ class ThermalPrinterManager(private val context: Context) {
         sb.appendLine(padRow("ID Pelanggan", invoice.customerCode))
         sb.appendLine(padRow("Nama", invoice.customerName))
         sb.appendLine(padRow("Paket", invoice.planName))
-        val quotaStr = if (invoice.quotaLimitGb > 0) "${invoice.quotaLimitGb} GB" else "Unlimited"
-        sb.appendLine(padRow("Kuota Data", "${invoice.dataUsedGb} / $quotaStr"))
         sb.appendLine(divider2)
 
         sb.appendLine(padRow("Biaya Langganan", invoice.formattedAmount))

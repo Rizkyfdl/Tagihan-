@@ -41,8 +41,7 @@ import com.example.data.model.Customer
 data class PlanPreset(
     val name: String,
     val speedMbps: Int,
-    val fee: Double,
-    val quotaGb: Int
+    val fee: Double
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,10 +52,10 @@ fun AddCustomerDialog(
     onSave: (Customer) -> Unit
 ) {
     val planPresets = listOf(
-        PlanPreset("Fiber Basic 20 Mbps", 20, 165000.0, 300),
-        PlanPreset("Fiber Family 30 Mbps", 30, 210000.0, 400),
-        PlanPreset("Fiber Gamer 50 Mbps", 50, 275000.0, 600),
-        PlanPreset("Fiber Bisnis 100 Mbps", 100, 450000.0, 0)
+        PlanPreset("Fiber Basic 20 Mbps", 20, 165000.0),
+        PlanPreset("Fiber Family 30 Mbps", 30, 210000.0),
+        PlanPreset("Fiber Gamer 50 Mbps", 50, 275000.0),
+        PlanPreset("Fiber Bisnis 100 Mbps", 100, 450000.0)
     )
 
     var name by remember { mutableStateOf(customerToEdit?.name ?: "") }
@@ -74,9 +73,6 @@ fun AddCustomerDialog(
     var customPlanName by remember { mutableStateOf(customerToEdit?.planName ?: selectedPlan.name) }
     var monthlyFeeStr by remember {
         mutableStateOf(customerToEdit?.monthlyFee?.toInt()?.toString() ?: selectedPlan.fee.toInt().toString())
-    }
-    var quotaLimitStr by remember {
-        mutableStateOf(customerToEdit?.quotaLimitGb?.toString() ?: selectedPlan.quotaGb.toString())
     }
     var dueDayStr by remember {
         mutableStateOf(customerToEdit?.dueDayOfMonth?.toString() ?: "15")
@@ -175,9 +171,8 @@ fun AddCustomerDialog(
                                 text = {
                                     Column {
                                         Text(preset.name, fontWeight = FontWeight.Bold)
-                                        val quotaText = if (preset.quotaGb > 0) "${preset.quotaGb} GB" else "Unlimited"
                                         Text(
-                                            "Rp ${preset.fee.toInt()} / bln • $quotaText",
+                                            "Rp ${preset.fee.toInt()} / bln • Kecepatan ${preset.speedMbps} Mbps",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -187,7 +182,6 @@ fun AddCustomerDialog(
                                     selectedPlan = preset
                                     customPlanName = preset.name
                                     monthlyFeeStr = preset.fee.toInt().toString()
-                                    quotaLimitStr = preset.quotaGb.toString()
                                     expandedPlanDropdown = false
                                 }
                             )
@@ -211,35 +205,22 @@ fun AddCustomerDialog(
                     )
 
                     OutlinedTextField(
-                        value = quotaLimitStr,
-                        onValueChange = { quotaLimitStr = it },
-                        label = { Text("Kuota FUP (GB)") },
-                        supportingText = { Text("0 = Unlimited") },
+                        value = dueDayStr,
+                        onValueChange = { dueDayStr = it },
+                        label = { Text("Tgl Tempo (1-28)") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier
                             .weight(1f)
-                            .testTag("input_customer_quota"),
+                            .testTag("input_customer_dueday"),
                         singleLine = true
                     )
                 }
-
-                OutlinedTextField(
-                    value = dueDayStr,
-                    onValueChange = { dueDayStr = it },
-                    label = { Text("Tgl Jatuh Tempo Tiap Bulan (1-28)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("input_customer_dueday"),
-                    singleLine = true
-                )
             }
         },
         confirmButton = {
             Button(
                 onClick = {
                     val fee = monthlyFeeStr.toDoubleOrNull() ?: 165000.0
-                    val quota = quotaLimitStr.toIntOrNull() ?: 300
                     val dueDay = (dueDayStr.toIntOrNull() ?: 10).coerceIn(1, 28)
 
                     val newOrUpdated = customerToEdit?.copy(
@@ -250,7 +231,7 @@ fun AddCustomerDialog(
                         planName = customPlanName,
                         planSpeedMbps = selectedPlan.speedMbps,
                         monthlyFee = fee,
-                        quotaLimitGb = quota,
+                        quotaLimitGb = 0,
                         dueDayOfMonth = dueDay
                     ) ?: Customer(
                         customerCode = customerCode.ifBlank { "NET-100" },
@@ -260,7 +241,7 @@ fun AddCustomerDialog(
                         planName = customPlanName,
                         planSpeedMbps = selectedPlan.speedMbps,
                         monthlyFee = fee,
-                        quotaLimitGb = quota,
+                        quotaLimitGb = 0,
                         currentUsageGb = 0.0,
                         dueDayOfMonth = dueDay
                     )
